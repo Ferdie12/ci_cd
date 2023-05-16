@@ -1,9 +1,11 @@
-var express = require('express');
-var router = express.Router();
-const base = require('../controllers/baseController');
+const express = require('express');
+const router = express.Router();
+const user = require('../controllers/user');
 
-/* GET home page. */
-router.get('/', base.index);
-router.post('/sum', base.sum);
+const middlewares = require('../utils/middlewares');
+
+router.post('/auth/register', user.register);
+router.post('/auth/login', user.login);
+router.get('/auth/whoami', middlewares.auth, user.whoami);
 
 module.exports = router;

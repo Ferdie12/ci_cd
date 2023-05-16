@@ -1,51 +1,160 @@
-const request = require('supertest');
-const app = require('../app.js');
+const supertest = require('supertest');
+const app = require('../app');
+const truncate = require('../utils/truncate');
 
-describe('base.index function', () => {
+// reset database user
+truncate.user();
+
+const user = {
+    name: 'sabrina',
+    email: 'sabrina3@mail.com',
+    password: 'password123',
+    token: ''
+};
+
+// register
+describe('TEST /auth/register endpoint', () => {
     // positive
-    test('res.json called { status: true, message: "Hello world!"', async () => {
+    test('Register berhasil : email belum terdaftar', async () => {
         try {
-            const res = await request(app).get('/');
 
-            expect(res.statusCode).toBe(200);
+            const res = await supertest(app)
+                .post('/auth/register')
+                .send(user);
+
+            console.log(res.body);
+
+            expect(res.statusCode).toBe(201);
             expect(res.body).toHaveProperty('status');
             expect(res.body).toHaveProperty('message');
+            expect(res.body).toHaveProperty('data');
+            expect(res.body.data).toHaveProperty('id');
+            expect(res.body.data).toHaveProperty('name');
+            expect(res.body.data).toHaveProperty('email');
             expect(res.body.status).toBe(true);
-            expect(res.body.message).toBe('hello world!');
-        } catch (err) {
-            expect(err).toBe('error'); // test gagal karena err != 'error'
+            expect(res.body.message).toBe('user created!');
+
+        } catch (error) {
+            expect(error).toBe('error');
+        }
+    });
+
+    // negative
+    test('Register gagal : email sudah terdaftar', async () => {
+        try {
+
+            const res = await supertest(app)
+                .post('/auth/register')
+                .send(user);
+
+            console.log(res.body);
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body).toHaveProperty('status');
+            expect(res.body).toHaveProperty('message');
+            expect(res.body).toHaveProperty('data');
+            expect(res.body.status).toBe(false);
+            expect(res.body.message).toBe('email already used!');
+
+        } catch (error) {
+            expect(error).toBe('error');
         }
     });
 });
 
-describe('base.sum function', () => {
-    // positive
-    test('res.json called { status: true, message: "success", data: {x: x, y: y, result: x+y}', async () => {
-        try {
-            const x = 10;
-            const y = 15;
-            const result = x + y;
 
-            const res = await request(app).post('/sum').send({x, y});
+// login 
+describe('TEST /auth/login endpoint', () => {
+    test('Login berhasil : email dan password valid', async () => {
+        try {
+
+            const res = await supertest(app)
+                .post('/auth/login')
+                .send(user);
+
+            console.log(res.body);
 
             expect(res.statusCode).toBe(200);
             expect(res.body).toHaveProperty('status');
             expect(res.body).toHaveProperty('message');
             expect(res.body).toHaveProperty('data');
+            expect(res.body.data).toHaveProperty('token');
             expect(res.body.status).toBe(true);
-            expect(res.body.message).toBe('success');
-            expect(res.body.data).toStrictEqual({x, y, result});
-        } catch (err) {
-            expect(err).toBe('error'); // test gagal karena err != 'error'
+            expect(res.body.message).toBe('login success!');
+
+            user.token = res.body.token;
+        } catch (error) {
+            expect(error).toBe('error');
         }
     });
 
-    /*
-    Positive case:
-    - Login email dan password benar -> expect berhasil
-    
-    Negative case:
-    - kalau email salah -> expect error
-    - kalau password salah -> expect error
-    */
+    test('Login gagal : email dan password tidak valid', async () => {
+        try {
+
+            const res = await supertest(app)
+                .post('/auth/login')
+                .send({
+                    email: user.email,
+                    password: `${user.password}45`
+                });
+
+            console.log(res.body);
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body).toHaveProperty('status');
+            expect(res.body).toHaveProperty('message');
+            expect(res.body).toHaveProperty('data');
+            expect(res.body.status).toBe(false);
+            expect(res.body.message).toBe('credential is not valid!');
+
+        } catch (error) {
+            expect(error).toBe('error');
+        }
+    });
+});
+
+// whoami
+describe('TEST /auth/whoami endpoint', () => {
+    test('Fetch user berhasil : token di provide', async () => {
+        try {
+
+            const res = await supertest(app)
+                .get('/auth/whoami')
+                .set('Authorization', user.token);
+
+
+            console.log(res.body);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toHaveProperty('status');
+            expect(res.body).toHaveProperty('message');
+            expect(res.body).toHaveProperty('data');
+            expect(res.body.data).toHaveProperty('token');
+            expect(res.body.status).toBe(true);
+            expect(res.body.message).toBe('login success!');
+
+        } catch (error) {
+            expect(error).toBe('error');
+        }
+    });
+
+    test('Fetch user gagal : token tidak di provide', async () => {
+        try {
+
+            const res = await supertest(app)
+                .get('/auth/whoami');
+
+            console.log(res.body);
+
+            expect(res.statusCode).toBe(401);
+            expect(res.body).toHaveProperty('status');
+            expect(res.body).toHaveProperty('message');
+            expect(res.body).toHaveProperty('data');
+            expect(res.body.status).toBe(false);
+            expect(res.body.message).toBe('you\'re not authorized!');
+
+        } catch (error) {
+            expect(error).toBe('error');
+        }
+    });
 });
