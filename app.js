@@ -18,7 +18,7 @@ app.use(router);
 app.get('/', (req,res) => {
     return res.status(200).json({
         status: true,
-        message: "Test CI/CD"
+        message: "Test CI/CD in Develop"
     })
 })
 
