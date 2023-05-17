@@ -15,8 +15,8 @@ app.use(morgan('dev'));
 
 app.use(router);
 
-router.get('/', (req,res) => {
-    return res.json({
+app.get('/', (req,res) => {
+    return res.status(200).json({
         status: true,
         message: "Test CI/CD"
     })
