@@ -1,18 +1,18 @@
-POST http://localhost:3000/register
+POST http://aplikasi-auth-develop.up.railway.app/auth/register
 Content-Type: application/json
 
 {
-    "name":"sabrina",
-    "email":"sabrina@mail.com",
+    "name":"ferdie",
+    "email":"ferdie@mail.com",
     "password":"password123"
 }
 
 ### 
-POST http://localhost:3000/login
+POST http://aplikasi-auth-develop.up.railway.app/auth/login
 Content-Type: application/json
 
 {
-    "email":"sabrina@mail.com",
+    "email":"ferdie@mail.com",
     "password":"password123"
 }
 

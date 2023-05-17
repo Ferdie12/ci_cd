@@ -15,6 +15,13 @@ app.use(morgan('dev'));
 
 app.use(router);
 
+router.get('/', (req,res) => {
+    return res.json({
+        status: true,
+        message: "Test CI/CD"
+    })
+})
+
 // 500
 app.use((err, req, res, next) => {
     console.log(err);
