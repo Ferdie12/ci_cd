@@ -15,6 +15,13 @@ app.use(morgan('dev'));
 
 app.use(router);
 
+app.get('/', (req,res) => {
+    return res.status(200).json({
+        status: true,
+        message: "Test CI/CD"
+    })
+})
+
 // 500
 app.use((err, req, res, next) => {
     console.log(err);
@@ -24,5 +31,7 @@ app.use((err, req, res, next) => {
         data: null
     });
 });
+
+app.listen(HTTP_PORT, () => console.log("server is running"));
 
 module.exports = app;
