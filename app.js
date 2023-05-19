@@ -45,10 +45,10 @@ app.get('/', (req,res) => {
 app.get('/error', (req,res) => {
     
 
-    return res.status(200).json({
-        status: true,
-        message: data
-    })
+    // return res.status(200).json({
+    //     status: true,
+    //     message: data
+    // })
 })
 
 app.use(Sentry.Handlers.errorHandler());
