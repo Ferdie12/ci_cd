@@ -4,6 +4,26 @@ const app = express();
 const morgan = require('morgan');
 const router = require('./routes');
 const cors = require('cors');
+const Sentry = require('@sentry/node');
+
+const {
+    SENTRY_DSN,
+    ENVIRONMENT
+} = process.env;
+
+Sentry.init({
+    environment: ENVIRONMENT,
+    dsn: SENTRY_DSN,
+    integrations: [
+      new Sentry.Integrations.Http({ tracing: true }),
+      new Sentry.Integrations.Express({ app }),
+      ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
+    ],
+    tracesSampleRate: 1.0,
+  });
+
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
 
 const {
     HTTP_PORT = 3000
@@ -22,6 +42,16 @@ app.get('/', (req,res) => {
     })
 })
 
+app.get('/error', (req,res) => {
+    
+
+    return res.status(200).json({
+        status: true,
+        message: data
+    })
+})
+
+app.use(Sentry.Handlers.errorHandler());
 // 500
 app.use((err, req, res, next) => {
     console.log(err);
