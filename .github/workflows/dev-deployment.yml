@@ -7,6 +7,7 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:13.2
@@ -19,25 +20,32 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Use Node 18
         uses: actions/setup-node@v3
         with:
           node-version: 18.12.0
+
       - name: Install packages
         run: npm install
+
       - name: Generate Prisma Client
         run: npx prisma generate
+
       - name: Create database
-        run: npx prisma db create
-      - name: Migrate database
+        run: npx prisma db push --preview-feature
+
+      - name: Run migrations
         run: npx prisma migrate dev --name init
-      - name: Run test
+
+      - name: Run tests
         run: npm test
         env:
-          DB_URL: postgres://postgres:123@localhost:5432/belajar_prisma
+          DB_URL: postgres://postgres:password@localhost:5432/ci-cd
           JWT_SECRET_KEY: rahasia
 
   cd:
