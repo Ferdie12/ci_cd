@@ -1,4 +1,4 @@
-const {User} = require('../db/models');
+const prisma = require('../utils/prismaConnect');
 const bcryp = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {JWT_SECRET_KEY} = process.env;
@@ -8,7 +8,7 @@ module.exports = {
         try {
             const {name, email, password} = req.body;
 
-            const exist = await User.findOne({where: {email}});
+            const exist = await prisma.user.findFirst({ where: {email}});
             if (exist) {
                 return res.status(400).json({
                     status: false,
@@ -19,8 +19,12 @@ module.exports = {
 
             const hashPassword = await bcryp.hash(password, 10);
 
-            const user = await User.create({
-                name, email, password: hashPassword
+            const user = await prisma.user.create({
+                data: {
+                    name,
+                    email,
+                    password: hashPassword
+                }
             });
 
             return res.status(201).json({
@@ -41,7 +45,7 @@ module.exports = {
         try {
             const {email, password} = req.body;
 
-            const user = await User.findOne({where: {email}});
+            const user = await prisma.user.findFirst({where: {email}});
             if (!user) {
                 return res.status(400).json({
                     status: false,

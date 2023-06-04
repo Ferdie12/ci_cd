@@ -1,4 +1,4 @@
-POST http://aplikasi-auth-develop.up.railway.app/auth/register
+POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ### 
-POST http://aplikasi-auth-develop.up.railway.app/auth/login
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
@@ -17,5 +17,5 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/whoami
-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6InNhYnJpbmFAbWFpbC5jb20iLCJpYXQiOjE2ODI2OTI2MDh9.VneW1WUp6Cupqe2H4zdYwwc18Ows-8OXnjd1nd1vTCY
+GET http://localhost:3000/auth/whoami
+Authorization:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6ImZlcmRpZSIsImVtYWlsIjoiZmVyZGllQG1haWwuY29tIiwiaWF0IjoxNjg1ODcyNDIyfQ.CPVHhLpjS3FFlhpsqvP9e13_dFnza43L7MDdwvcGkx0

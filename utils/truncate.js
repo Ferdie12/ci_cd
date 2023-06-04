@@ -1,7 +1,7 @@
-const {User} = require('../db/models');
+const prisma = require('./prismaConnect');
 
 module.exports = {
     user: async () => {
-        await User.destroy({truncate: true, restartIdentity: true});
+        await prisma.user.deleteMany({});
     }
 };
